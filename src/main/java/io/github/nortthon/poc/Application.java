@@ -1,4 +1,4 @@
-package com.netshoes.poc;
+package io.github.nortthon.poc;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

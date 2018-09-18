@@ -1,4 +1,4 @@
-package com.netshoes.poc.domains;
+package io.github.nortthon.poc.domains;
 
 import lombok.Getter;
 import lombok.Setter;

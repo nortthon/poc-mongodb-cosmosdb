@@ -1,8 +1,8 @@
-package com.netshoes.poc.gateways;
+package io.github.nortthon.poc.gateways;
 
-import com.netshoes.poc.domains.User;
-import com.netshoes.poc.gateways.cosmos.UserCosmosRepository;
-import com.netshoes.poc.gateways.mongo.UserMongoRepository;
+import io.github.nortthon.poc.domains.User;
+import io.github.nortthon.poc.gateways.cosmos.UserCosmosRepository;
+import io.github.nortthon.poc.gateways.mongo.UserMongoRepository;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Component;
 

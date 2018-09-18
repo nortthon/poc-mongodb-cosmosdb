@@ -1,11 +1,10 @@
-package com.netshoes.poc.config;
+package io.github.nortthon.poc.config;
 
 import com.mongodb.MongoClientURI;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
@@ -15,22 +14,21 @@ import java.net.UnknownHostException;
 
 @Configuration
 @EnableMongoRepositories(
-        basePackages = "com.netshoes.poc.gateways.mongo",
-        mongoTemplateRef = "mongoTemplate"
+        basePackages = "com.netshoes.poc.gateways.cosmos",
+        mongoTemplateRef = "cosmosMongoTemplate"
 )
-public class MongoConfig {
+public class CosmosConfig {
 
-    @Value("${spring.data.mongo.uri}")
-    private String mongoUri;
+    @Value("${spring.data.cosmos.uri}")
+    private String cosmosUri;
 
-    @Primary
     @Bean
-    public MongoDbFactory mongoDbFactory() throws UnknownHostException {
-        return new SimpleMongoDbFactory(new MongoClientURI(mongoUri));
+    public MongoDbFactory cosmosMongoDbFactory() throws UnknownHostException {
+        return new SimpleMongoDbFactory(new MongoClientURI(cosmosUri));
     }
 
     @Bean
-    public MongoTemplate mongoTemplate(@Qualifier("mongoDbFactory") final MongoDbFactory mongoDbFactory) {
-        return new MongoTemplate(mongoDbFactory);
+    public MongoTemplate cosmosMongoTemplate(@Qualifier("cosmosMongoDbFactory") final MongoDbFactory cosmosMongoDbFactory) {
+        return new MongoTemplate(cosmosMongoDbFactory);
     }
 }
