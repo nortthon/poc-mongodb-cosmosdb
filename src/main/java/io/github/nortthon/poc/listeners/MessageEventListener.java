@@ -1,4 +1,4 @@
-package io.github.nortthon.poc.gateways.listeners;
+package io.github.nortthon.poc.listeners;
 
 import io.github.nortthon.poc.domains.DeleteEvent;
 import io.github.nortthon.poc.domains.SaveEvent;

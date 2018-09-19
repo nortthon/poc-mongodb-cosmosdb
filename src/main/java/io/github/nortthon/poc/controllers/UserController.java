@@ -1,6 +1,7 @@
-package io.github.nortthon.poc.gateways;
+package io.github.nortthon.poc.controllers;
 
 import io.github.nortthon.poc.domains.User;
+import io.github.nortthon.poc.gateways.UserGateway;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.config.ResourceNotFoundException;
 import org.springframework.web.bind.annotation.*;
