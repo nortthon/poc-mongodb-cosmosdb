@@ -1,6 +1,7 @@
 package io.github.nortthon.poc.config;
 
 import com.mongodb.BasicDBObject;
+import io.github.nortthon.poc.domains.ColdBase;
 import io.github.nortthon.poc.domains.DeleteEvent;
 import io.github.nortthon.poc.domains.SaveEvent;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +22,18 @@ public class MongoEventListener extends AbstractMongoEventListener<Object> {
     @Override
     public void onAfterSave(AfterSaveEvent<Object> event) {
         super.onAfterSave(event);
-        publisher.publishEvent(new SaveEvent(event, event.getCollectionName(), (BasicDBObject) event.getDBObject()));
+
+        if (event.getSource().getClass().isAnnotationPresent(ColdBase.class)) {
+            publisher.publishEvent(new SaveEvent(event, event.getCollectionName(), (BasicDBObject) event.getDBObject()));
+        }
     }
 
     @Override
     public void onAfterDelete(AfterDeleteEvent<Object> event) {
         super.onAfterDelete(event);
-        publisher.publishEvent(new DeleteEvent(event, event.getCollectionName(), (BasicDBObject) event.getDBObject()));
-    }
 
+        if (event.getType().isAnnotationPresent(ColdBase.class)) {
+            publisher.publishEvent(new DeleteEvent(event, event.getCollectionName(), (BasicDBObject) event.getDBObject()));
+        }
+    }
 }
