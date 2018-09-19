@@ -3,6 +3,7 @@ package io.github.nortthon.poc.gateways;
 import io.github.nortthon.poc.domains.User;
 import io.github.nortthon.poc.gateways.cosmos.UserCosmosRepository;
 import io.github.nortthon.poc.gateways.mongo.UserMongoRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Component;
 
@@ -13,16 +14,12 @@ import java.util.Random;
 import static java.util.Arrays.asList;
 
 @Component
+@RequiredArgsConstructor
 public class UserGateway {
 
     private final UserMongoRepository mongoRepository;
 
     private final UserCosmosRepository cosmosRepository;
-
-    public UserGateway(UserMongoRepository mongoRepository, UserCosmosRepository cosmosRepository) {
-        this.mongoRepository = mongoRepository;
-        this.cosmosRepository = cosmosRepository;
-    }
 
     public Optional<User> findById(final String id) {
         final Random rand = new Random();
@@ -41,13 +38,10 @@ public class UserGateway {
     }
 
     public User save(final User user) {
-        final User savedUser = mongoRepository.save(user);
-        cosmosRepository.save(savedUser);
-        return savedUser;
+        return mongoRepository.save(user);
     }
 
     public void delete(final String id) {
         mongoRepository.delete(id);
-        cosmosRepository.delete(id);
     }
 }

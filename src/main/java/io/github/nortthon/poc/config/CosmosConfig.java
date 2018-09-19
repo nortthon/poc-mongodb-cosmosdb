@@ -14,7 +14,7 @@ import java.net.UnknownHostException;
 
 @Configuration
 @EnableMongoRepositories(
-        basePackages = "com.netshoes.poc.gateways.cosmos",
+        basePackages = "io.github.nortthon.poc.gateways.cosmos",
         mongoTemplateRef = "cosmosMongoTemplate"
 )
 public class CosmosConfig {

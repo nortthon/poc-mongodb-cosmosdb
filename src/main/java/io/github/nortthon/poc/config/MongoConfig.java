@@ -15,7 +15,7 @@ import java.net.UnknownHostException;
 
 @Configuration
 @EnableMongoRepositories(
-        basePackages = "com.netshoes.poc.gateways.mongo",
+        basePackages = "io.github.nortthon.poc.gateways.mongo",
         mongoTemplateRef = "mongoTemplate"
 )
 public class MongoConfig {
