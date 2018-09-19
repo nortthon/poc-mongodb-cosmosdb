@@ -1,6 +1,7 @@
 package io.github.nortthon.poc.gateways.listeners;
 
-import io.github.nortthon.poc.domains.UserEvent;
+import io.github.nortthon.poc.domains.DeleteEvent;
+import io.github.nortthon.poc.domains.SaveEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.EventListener;
@@ -18,7 +19,12 @@ public class MessageEventListener {
     }
 
     @EventListener
-    public void event(final UserEvent userEvent) {
-        cosmosMongoTemplate.getCollection(userEvent.getCollection()).save(userEvent.getDbObject());
+    public void saveEvent(final SaveEvent saveEvent) {
+        cosmosMongoTemplate.getCollection(saveEvent.getCollection()).save(saveEvent.getDbObject());
+    }
+
+    @EventListener
+    public void deleteEvent(final DeleteEvent deleteEvent) {
+        cosmosMongoTemplate.getCollection(deleteEvent.getCollection()).remove(deleteEvent.getDbObject());
     }
 }
