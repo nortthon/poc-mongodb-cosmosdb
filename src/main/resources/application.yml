@@ -1,8 +1,18 @@
+management.security.enabled: false
+
+info:
+  build:
+    version: @project.version@
+    name: @project.name@
+  app:
+    encoding: @project.build.sourceEncoding@
+    java:
+      source: @java.version@
+      target: @java.version@
+
 spring:
   data:
     mongo:
       uri: mongodb://localhost:27017/dbTest
     cosmos:
       uri: mongodb://localhost:C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==@localhost:10255/dbTest?ssl=true
-
-management.security.enabled: false
