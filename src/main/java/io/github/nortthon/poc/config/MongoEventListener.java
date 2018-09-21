@@ -1,15 +1,14 @@
 package io.github.nortthon.poc.config;
 
-import com.mongodb.BasicDBObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.nortthon.poc.domains.ColdBase;
-import io.github.nortthon.poc.domains.DeleteEvent;
 import io.github.nortthon.poc.domains.SaveEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
-import org.springframework.data.mongodb.core.mapping.event.AfterDeleteEvent;
 import org.springframework.data.mongodb.core.mapping.event.AfterSaveEvent;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -17,23 +16,26 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class MongoEventListener extends AbstractMongoEventListener<Object> {
 
-    private final ApplicationEventPublisher publisher;
+    private final KafkaTemplate<String, SaveEvent> kafkaTemplate;
+
+    private final ObjectMapper om;
 
     @Override
     public void onAfterSave(AfterSaveEvent<Object> event) {
         super.onAfterSave(event);
 
         if (event.getSource().getClass().isAnnotationPresent(ColdBase.class)) {
-            publisher.publishEvent(new SaveEvent(event, event.getCollectionName(), (BasicDBObject) event.getDBObject()));
+            final String source = serialize(event.getSource());
+            kafkaTemplate.send("cosmos.topic.test", new SaveEvent(event.getCollectionName(), source));
         }
     }
 
-    @Override
-    public void onAfterDelete(AfterDeleteEvent<Object> event) {
-        super.onAfterDelete(event);
-
-        if (event.getType().isAnnotationPresent(ColdBase.class)) {
-            publisher.publishEvent(new DeleteEvent(event, event.getCollectionName(), (BasicDBObject) event.getDBObject()));
+    private String serialize(final Object source) {
+        try {
+            return om.writeValueAsString(source);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         }
     }
 }

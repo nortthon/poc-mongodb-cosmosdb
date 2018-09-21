@@ -1,19 +1,19 @@
 package io.github.nortthon.poc.domains;
 
-import com.mongodb.BasicDBObject;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.context.ApplicationEvent;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.io.Serializable;
 
 @Getter
-public class SaveEvent extends ApplicationEvent {
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class SaveEvent implements Serializable {
 
-    private final String collection;
+    private String collectionName;
 
-    private final BasicDBObject dbObject;
-
-    public SaveEvent(final Object source, final String collection, final BasicDBObject dbObject) {
-        super(source);
-        this.collection = collection;
-        this.dbObject = dbObject;
-    }
+    private String source;
 }
