@@ -1,9 +1,8 @@
 package io.github.nortthon.poc.listeners;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.microsoft.azure.servicebus.ExceptionPhase;
-import com.microsoft.azure.servicebus.IMessage;
-import com.microsoft.azure.servicebus.IMessageHandler;
+import com.microsoft.azure.servicebus.*;
+import com.microsoft.azure.servicebus.primitives.ServiceBusException;
 import com.mongodb.DBObject;
 import io.github.nortthon.poc.domains.User;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +12,7 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -28,10 +28,13 @@ public class MessageHandler implements IMessageHandler {
     private final ObjectMapper om;
 
     public MessageHandler(@Qualifier("cosmosMongoTemplate") final MongoTemplate cosmosMongoTemplate,
-                          final MappingMongoConverter mongoConverter, final ObjectMapper om) {
+                          final MappingMongoConverter mongoConverter,
+                          final ObjectMapper om, final QueueClient queueClient) throws ServiceBusException, InterruptedException {
         this.cosmosMongoTemplate = cosmosMongoTemplate;
         this.mongoConverter = mongoConverter;
         this.om = om;
+
+        queueClient.registerMessageHandler(this, new MessageHandlerOptions(1, true, Duration.ofMinutes(1)));
     }
 
     @Override

@@ -19,5 +19,6 @@ spring:
 
 azure:
   servicebus:
-    connectionString: Endpoint=sb://sb-name.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SQ8TpsTP5nt777Jih9RK9lxfAmq2g0M3Y/zH9+o6TSg=
-    queueName: queue-name
+    connection-string: Endpoint=sb://sb-name.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SQ8TpsTP5nt777Jih9RK9lxfAmq2g0M3Y/zH9+o6TSg=
+    queue-name: queue-name
+    queue-receive-mode: peeklock
