@@ -1,11 +1,10 @@
 package io.github.nortthon.poc.listeners;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microsoft.azure.spring.data.documentdb.core.DocumentDbTemplate;
 import com.mongodb.DBObject;
 import io.github.nortthon.poc.domains.SaveEvent;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -19,15 +18,14 @@ import static io.github.nortthon.poc.domains.CollectionType.getClazz;
 @Service
 public class KafkaConsumer {
 
-    private final MongoTemplate cosmosMongoTemplate;
+    private final DocumentDbTemplate documentDbTemplate;
 
     private final MappingMongoConverter mongoConverter;
 
     private final ObjectMapper om;
 
-    public KafkaConsumer(@Qualifier("cosmosMongoTemplate") final MongoTemplate cosmosMongoTemplate,
-                         final MappingMongoConverter mongoConverter, final ObjectMapper om) {
-        this.cosmosMongoTemplate = cosmosMongoTemplate;
+    public KafkaConsumer(DocumentDbTemplate documentDbTemplate, final MappingMongoConverter mongoConverter, final ObjectMapper om) {
+        this.documentDbTemplate = documentDbTemplate;
         this.mongoConverter = mongoConverter;
         this.om = om;
     }
@@ -39,6 +37,8 @@ public class KafkaConsumer {
         final Object source = om.readValue(saveEvent.getSource(), getClazz(saveEvent.getCollectionName()));
         final DBObject dbObject = (DBObject) mongoConverter.convertToMongoType(source);
 
-        cosmosMongoTemplate.getCollection(saveEvent.getCollectionName()).save(dbObject);
+        documentDbTemplate.insert(saveEvent.getCollectionName(), source, null);
+
+        //cosmosMongoTemplate.getCollection(saveEvent.getCollectionName()).save(dbObject);
     }
 }

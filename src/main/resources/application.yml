@@ -18,3 +18,9 @@ spring:
       uri: mongodb://localhost:27017/dbTest2
   kafka:
     bootstrapServers: localhost:9092
+
+azure:
+  documentdb:
+    uri: document-uri
+    key: document-key
+    database: document-db

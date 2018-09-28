@@ -1,7 +1,9 @@
 package io.github.nortthon.poc.gateways.cosmos;
 
+import com.microsoft.azure.spring.data.documentdb.repository.DocumentDbRepository;
 import io.github.nortthon.poc.domains.User;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UserCosmosRepository extends MongoRepository<User, String> {
+@Repository
+public interface UserCosmosRepository extends DocumentDbRepository<User, String> {
 }

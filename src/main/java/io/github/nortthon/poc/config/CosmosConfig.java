@@ -1,34 +1,34 @@
 package io.github.nortthon.poc.config;
 
-import com.mongodb.MongoClientURI;
-import org.springframework.beans.factory.annotation.Qualifier;
+import com.microsoft.azure.documentdb.ConnectionPolicy;
+import com.microsoft.azure.documentdb.ConsistencyLevel;
+import com.microsoft.azure.documentdb.DocumentClient;
+import com.microsoft.azure.spring.data.documentdb.config.AbstractDocumentDbConfiguration;
+import com.microsoft.azure.spring.data.documentdb.repository.config.EnableDocumentDbRepositories;
+import io.github.nortthon.poc.gateways.cosmos.UserCosmosRepository;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.MongoDbFactory;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-
-import java.net.UnknownHostException;
 
 @Configuration
-@EnableMongoRepositories(
-        basePackages = "io.github.nortthon.poc.gateways.cosmos",
-        mongoTemplateRef = "cosmosMongoTemplate"
-)
-public class CosmosConfig {
+@EnableDocumentDbRepositories(basePackageClasses = UserCosmosRepository.class)
+public class CosmosConfig extends AbstractDocumentDbConfiguration {
 
-    @Value("${spring.data.cosmos.uri}")
-    private String cosmosUri;
+    @Value("${azure.documentdb.uri}")
+    private String uri;
 
-    @Bean
-    public MongoDbFactory cosmosMongoDbFactory() throws UnknownHostException {
-        return new SimpleMongoDbFactory(new MongoClientURI(cosmosUri));
+    @Value("${azure.documentdb.key:}")
+    private String key;
+
+    @Value("${azure.documentdb.database}")
+    private String dbName;
+
+    @Override
+    public DocumentClient documentClient() {
+        return new DocumentClient(uri, key, ConnectionPolicy.GetDefault(), ConsistencyLevel.Session);
     }
 
-    @Bean
-    public MongoTemplate cosmosMongoTemplate(@Qualifier("cosmosMongoDbFactory") final MongoDbFactory cosmosMongoDbFactory) {
-        return new MongoTemplate(cosmosMongoDbFactory);
+    @Override
+    public String getDatabase() {
+        return dbName;
     }
 }
