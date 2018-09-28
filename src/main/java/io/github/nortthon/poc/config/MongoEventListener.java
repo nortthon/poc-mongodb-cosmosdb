@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.nortthon.poc.domains.ColdBase;
 import io.github.nortthon.poc.domains.SaveEvent;
+import io.github.nortthon.poc.domains.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
@@ -14,14 +15,14 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class MongoEventListener extends AbstractMongoEventListener<Object> {
+public class MongoEventListener extends AbstractMongoEventListener<User> {
 
     private final KafkaTemplate<String, SaveEvent> kafkaTemplate;
 
     private final ObjectMapper om;
 
     @Override
-    public void onAfterSave(AfterSaveEvent<Object> event) {
+    public void onAfterSave(AfterSaveEvent<User> event) {
         super.onAfterSave(event);
 
         if (event.getSource().getClass().isAnnotationPresent(ColdBase.class)) {

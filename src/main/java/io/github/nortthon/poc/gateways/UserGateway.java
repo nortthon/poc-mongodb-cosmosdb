@@ -1,40 +1,34 @@
 package io.github.nortthon.poc.gateways;
 
 import io.github.nortthon.poc.domains.User;
-import io.github.nortthon.poc.gateways.cosmos.UserCosmosRepository;
 import io.github.nortthon.poc.gateways.mongo.UserMongoRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
-
-import static java.util.Arrays.asList;
 
 @Component
-@RequiredArgsConstructor
 public class UserGateway {
 
     private final UserMongoRepository mongoRepository;
 
-    private final UserCosmosRepository cosmosRepository;
+    private final MongoTemplate cosmosMongoTemplate;
+
+    public UserGateway(UserMongoRepository mongoRepository, @Qualifier("cosmosMongoTemplate") MongoTemplate cosmosMongoTemplate) {
+        this.mongoRepository = mongoRepository;
+        this.cosmosMongoTemplate = cosmosMongoTemplate;
+    }
 
     public Optional<User> findById(final String id) {
-        final Random rand = new Random();
-        final List<MongoRepository<User, String>> repositories = asList(mongoRepository, cosmosRepository);
-        final MongoRepository<User, String> repository = repositories.get(rand.nextInt(2));
-
-        return Optional.ofNullable(repository.findOne(id));
+        //return Optional.ofNullable(mongoRepository.findOne(id));
+        return Optional.ofNullable(cosmosMongoTemplate.findById(id, User.class));
     }
 
     public List<User> findAll() {
-        final Random rand = new Random();
-        final List<MongoRepository<User, String>> repositories = asList(mongoRepository, cosmosRepository);
-        final MongoRepository<User, String> repository = repositories.get(rand.nextInt(2));
-
-        return repository.findAll();
+        //return mongoRepository.findAll();
+        return cosmosMongoTemplate.findAll(User.class);
     }
 
     public User save(final User user) {
