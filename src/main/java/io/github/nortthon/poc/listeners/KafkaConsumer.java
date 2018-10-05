@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
@@ -33,12 +35,12 @@ public class KafkaConsumer {
     }
 
     @KafkaListener(topics = "cosmos.topic.test")
-    public void receive(@Payload SaveEvent saveEvent) throws IOException {
-        log.info(saveEvent.getSource());
+    public void receive(@Payload String payload, @Header("collection-name") String collectionName) throws IOException {
+        log.info("Collection name: {} with payload: {}", collectionName, payload);
 
-        final Object source = om.readValue(saveEvent.getSource(), getClazz(saveEvent.getCollectionName()));
+        final Object source = om.readValue(payload, getClazz(collectionName));
         final DBObject dbObject = (DBObject) mongoConverter.convertToMongoType(source);
 
-        cosmosMongoTemplate.getCollection(saveEvent.getCollectionName()).save(dbObject);
+        cosmosMongoTemplate.getCollection(collectionName).save(dbObject);
     }
 }

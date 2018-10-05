@@ -3,12 +3,14 @@ package io.github.nortthon.poc.config;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.nortthon.poc.domains.ColdBase;
-import io.github.nortthon.poc.domains.SaveEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.AfterSaveEvent;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -16,7 +18,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class MongoEventListener extends AbstractMongoEventListener<Object> {
 
-    private final KafkaTemplate<String, SaveEvent> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     private final ObjectMapper om;
 
@@ -26,7 +28,14 @@ public class MongoEventListener extends AbstractMongoEventListener<Object> {
 
         if (event.getSource().getClass().isAnnotationPresent(ColdBase.class)) {
             final String source = serialize(event.getSource());
-            kafkaTemplate.send("cosmos.topic.test", new SaveEvent(event.getCollectionName(), source));
+
+            Message<String> message = MessageBuilder
+                    .withPayload(source)
+                    .setHeader(KafkaHeaders.TOPIC, "cosmos.topic.test")
+                    .setHeader("collection-name", event.getCollectionName())
+                    .build();
+
+            kafkaTemplate.send(message);
         }
     }
 
