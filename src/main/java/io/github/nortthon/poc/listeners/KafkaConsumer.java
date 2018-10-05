@@ -2,13 +2,11 @@ package io.github.nortthon.poc.listeners;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DBObject;
-import io.github.nortthon.poc.domains.SaveEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
